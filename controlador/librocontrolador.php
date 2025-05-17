@@ -1,26 +1,31 @@
 <?php
+// controlador/librocontrolador.php
 require_once __DIR__ . '/../modelo/libro.php';
 
-class LibroControlador {
+class librocontrolador {
     private $modelo_libro;
 
     public function __construct() {
         $this->modelo_libro = new Libro();
     }
 
-    // muestra el catálogo de libros para el bibliotecario
     public function catalogo() {
-        // sólo bibliotecarios (rol_id = 2) y administradores pueden ver
-        if (empty($_SESSION['usuario']) 
-            || !in_array($_SESSION['usuario']['usuario_rol_id'], [1,2])) {
-            header('Location: /BibliotecaV2/index.php?accion=login');
-            $filtro = trim($_GET['q'] ?? '');
-            $libros = $this->modelo_libro->listar_libros($filtro);
-            require __DIR__ . '/../vista/catalogo_libros.php';
+        // sólo bibliotecarios (2) y administradores (1)
+        if (
+            empty($_SESSION['usuario']) ||
+            !in_array($_SESSION['usuario']['usuario_rol_id'], [1,2])
+        ) {
+            header('location: /bibliotecav2/index.php?accion=login');
             exit;
         }
 
-        $libros = $this->modelo_libro->listar_libros();
+        // leo el filtro de búsqueda (GET q)
+        $filtro = trim($_GET['q'] ?? '');
+
+        // paso el filtro al modelo
+        $libros = $this->modelo_libro->listar_libros($filtro);
+
+        // cargo la vista con $libros disponible
         require __DIR__ . '/../vista/catalogo_libros.php';
     }
 }

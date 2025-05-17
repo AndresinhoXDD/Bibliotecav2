@@ -1,15 +1,15 @@
 <?php
-date_default_timezone_set('America/Bogota');
+date_default_timezone_set('america/bogota');
 
 require_once __DIR__ . '/../modelo/usuario.php';
 
-class LoginControlador
+class logincontrolador
 {
     private $modelo_usuario;
 
     public function __construct()
     {
-        $this->modelo_usuario = new Usuario();
+        $this->modelo_usuario = new usuario();
     }
 
     public function login()
@@ -19,22 +19,20 @@ class LoginControlador
             $email = trim($_POST['email'] ?? '');
             $contrasena = trim($_POST['contrasena'] ?? '');
             if ($email === '' || $contrasena === '') {
-                $error = 'Ingrese email y contraseña.';
+                $error = 'ingrese email y contraseña.';
             } else {
                 $usuario = $this->modelo_usuario->autenticar($email, $contrasena);
                 if ($usuario) {
                     $_SESSION['usuario'] = $usuario;
-                    // Redirigir según rol
-
+                    // redirigir según rol
                     if ($usuario['usuario_rol_id'] == 1) {
-                        header('Location: vista/panel_administrador.php');
+                        header('location: /bibliotecav2/index.php?accion=panel_administrador');
                     } else {
-                        header('Location: vista/panel_bibliotecario.php');
+                        header('location: /bibliotecav2/index.php?accion=panel_bibliotecario');
                     }
-
                     exit;
                 } else {
-                    $error = 'Credenciales inválidas.';
+                    $error = 'credenciales inválidas.';
                 }
             }
         }
@@ -44,8 +42,9 @@ class LoginControlador
     public function logout()
     {
         session_destroy();
-        // Redirijo al front-controller en la raíz del proyecto
-        header('Location: /BibliotecaV2/index.php');
+        // redirigir al login
+        header('location: /bibliotecav2/index.php?accion=login');
         exit;
     }
 }
+?>
