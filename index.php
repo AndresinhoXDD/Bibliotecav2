@@ -6,6 +6,7 @@ session_start();
 require_once 'controlador/logincontrolador.php';
 require_once 'controlador/usuariocontrolador.php';
 require_once 'controlador/librocontrolador.php';
+require_once 'controlador/prestamocontrolador.php';
 
 $accion = $_GET['accion'] ?? 'login';
 
@@ -43,6 +44,11 @@ switch ($accion) {
     case 'catalogo_libros':
         $ctrlLibro = new LibroControlador();
         $ctrlLibro->catalogo();
+        break;
+
+    case 'gestion_prestamos':
+        $ctrlPre = new prestamocontrolador();
+        $ctrlPre->gestion_prestamos();
         break;
 
 
