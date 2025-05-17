@@ -8,6 +8,7 @@ require_once 'controlador/usuariocontrolador.php';
 require_once 'controlador/librocontrolador.php';
 require_once 'controlador/prestamocontrolador.php';
 
+
 $accion = $_GET['accion'] ?? 'login';
 
 switch ($accion) {
@@ -50,6 +51,24 @@ switch ($accion) {
         $ctrlPre = new prestamocontrolador();
         $ctrlPre->gestion_prestamos();
         break;
+
+    // ...
+    case 'confirmar_devolucion':
+        $ctrlPre = new prestamocontrolador();
+        $ctrlPre->confirmar_devolucion();
+        break;
+
+    case 'nuevo_prestamo':
+        $ctrlPre = new prestamocontrolador();
+        $ctrlPre->nuevo_prestamo();
+        break;
+
+    case 'registrar_prestamo':
+        $ctrlPre = new prestamocontrolador();
+        $ctrlPre->registrar_prestamo();
+        break;
+
+
 
 
     default:
