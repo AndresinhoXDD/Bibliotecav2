@@ -1,6 +1,6 @@
 <?php
 date_default_timezone_set('America/Bogota');
-session_start();
+
 require_once __DIR__ . '/../modelo/usuario.php';
 
 class LoginControlador
