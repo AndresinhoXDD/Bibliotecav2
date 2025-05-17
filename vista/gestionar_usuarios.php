@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 if (empty($_SESSION['usuario']) || $_SESSION['usuario']['usuario_rol_id'] != 1) {
     header('Location: ../index.php');
     exit;
@@ -16,14 +16,17 @@ $usuario = $_SESSION['usuario'];
 <body>
 <nav class="navbar navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="panel_administrador.php">« volver</a>
+  <a class="navbar-brand" href="/BibliotecaV2/index.php?accion=panel_administrador">« volver</a>
     <span class="navbar-text">hola, <?= htmlspecialchars($usuario['usuario_nombre']) ?> (administrador)</span>
   </div>
 </nav>
 
 <div class="container mt-4">
     <h1>gestionar usuarios</h1>
-    <form method="post" action="../controlador/usuarioControlador.php?accion=actualizar_roles">
+    <form method="post" action="/BibliotecaV2/index.php?accion=actualizar_roles">
+    <!-- resto de la tabla y botones -->
+
+
         <table class="table table-striped">
             <thead>
                 <tr>
