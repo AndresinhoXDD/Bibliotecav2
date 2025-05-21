@@ -84,7 +84,7 @@ unset($_SESSION['mensaje_exito'], $_SESSION['mensaje_error']);
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Seleccione hasta 3 ejemplares disponibles *</label>
+                        <label class="form-label">Seleccione hasta 3 libros disponibles *</label>
                         <div class="table-responsive">
                             <table class="table table-sm table-bordered">
                                 <thead>
@@ -93,20 +93,22 @@ unset($_SESSION['mensaje_exito'], $_SESSION['mensaje_error']);
                                         <th>Título</th>
                                         <th>Autor</th>
                                         <th>ISBN</th>
+                                        <th>Disponibles</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($ejemplares as $i => $e): ?>
+                                    <?php foreach ($libros as $i => $l): ?>
                                         <tr>
                                             <td class="text-center">
                                                 <input
                                                     type="checkbox"
-                                                    name="ejemplar[]"
-                                                    value="<?= $e['ejemplar_id'] ?>">
+                                                    name="libro[]"
+                                                    value="<?= $l['libro_id'] ?>">
                                             </td>
-                                            <td><?= htmlspecialchars($e['libro_titulo']) ?></td>
-                                            <td><?= htmlspecialchars($e['autor_nombre'] ?: '—') ?></td>
-                                            <td><?= htmlspecialchars($e['libro_isbn']) ?></td>
+                                            <td><?= htmlspecialchars($l['libro_titulo']) ?></td>
+                                            <td><?= htmlspecialchars($l['autor_nombre'] ?: '—') ?></td>
+                                            <td><?= htmlspecialchars($l['libro_isbn']) ?></td>
+                                            <td class="text-center"><?= $l['disponibles'] ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
