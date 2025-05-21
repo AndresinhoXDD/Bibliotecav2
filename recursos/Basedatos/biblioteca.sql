@@ -27,6 +27,15 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `autor`
 --
 
+DROP SCHEMA IF EXISTS biblioteca ;
+
+-- -----------------------------------------------------
+-- Schema biblioteca
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS biblioteca DEFAULT CHARACTER SET utf8mb4 ;
+USE biblioteca ;
+
+
 CREATE TABLE `autor` (
   `autor_id` int(11) NOT NULL,
   `autor_nombre` varchar(100) NOT NULL,
@@ -144,7 +153,7 @@ INSERT INTO `prestamo` (`prestamo_id`, `prestamo_prestatario_id`, `prestamo_bibl
 (2, 2, 2, '2025-05-18 14:09:03', '2025-05-25 00:00:00', NULL),
 (3, 3, 2, '2025-05-18 14:09:03', '2025-05-26 00:00:00', NULL),
 (4, 4, 2, '2025-05-18 14:09:03', '2025-05-27 00:00:00', NULL),
-(5, 9, 2, '2025-05-18 14:09:57', '2025-05-21 00:00:00', NULL),
+(5, 9, 2, '2025-05-18 14:09:57', '2025-05-10 00:00:00', NULL),
 (6, 10, 2, '2025-05-18 14:10:10', '2025-05-21 00:00:00', '2025-05-20 18:26:26'),
 (7, 11, 2, '2025-05-20 18:26:08', '2025-05-23 00:00:00', '2025-05-20 18:26:16');
 
