@@ -47,11 +47,6 @@ $usuario = $_SESSION['usuario'];
                 <i class="fas fa-plus-circle me-1"></i>nuevo préstamo
             </a>
         </div>
-        <div class="col-md-3">
-            <a href="index.php?accion=gestion_prestamos&filter=mora" class="btn btn-danger w-100">
-                <i class="fas fa-exclamation-triangle me-1"></i>préstamos en mora
-            </a>
-        </div>
     </div>
 </div>
 

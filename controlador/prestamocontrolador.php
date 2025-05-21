@@ -13,7 +13,7 @@ class prestamocontrolador
 
     public function gestion_prestamos()
     {
-        // sólo bibliotecarios
+        // Verificar rol bibliotecario
         if (
             empty($_SESSION['usuario']) ||
             $_SESSION['usuario']['usuario_rol_id'] != 2
@@ -22,19 +22,25 @@ class prestamocontrolador
             exit;
         }
 
-        // 1) obtenemos todos los préstamos pendientes
+        // 1) Traer préstamos pendientes
         $prestamos = $this->modelo_prestamo->listar_prestamos();
 
-        // 2) calculamos estado y fecha prevista (ya viene) y añadimos campo estado
+        // 2) Calcular estado
         $hoy = new DateTime('today');
         foreach ($prestamos as &$p) {
-            // convertir fecha prevista a DateTime
             $prevista = new DateTime($p['fecha_devolucion_prevista']);
             $p['estado'] = ($prevista < $hoy) ? 'en mora' : 'a tiempo';
         }
         unset($p);
 
-        // 3) filtrado opcional: ?filter=mora
+        // 2.1) Inyectar siempre la clave 'ejemplares'
+        foreach ($prestamos as &$p) {
+            $p['ejemplares'] = $this->modelo_prestamo
+                ->obtener_ejemplares_por_prestamo($p['prestamo_id']);
+        }
+        unset($p);
+
+        // 3) Filtrado opcional
         $filter = $_GET['filter'] ?? '';
         $filterActivo = false;
         if ($filter === 'mora') {
@@ -42,9 +48,10 @@ class prestamocontrolador
             $prestamos = array_filter($prestamos, fn($p) => $p['estado'] === 'en mora');
         }
 
-        // 4) cargamos la vista
+        // 4) Cargar vista
         require __DIR__ . '/../vista/gestion_prestamos.php';
     }
+
     public function confirmar_devolucion()
     {
         // sólo bibliotecarios

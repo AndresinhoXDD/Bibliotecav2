@@ -58,25 +58,30 @@ class Prestamo
     public function obtener_ejemplares_por_prestamo(int $prestamoId): array
     {
         $sql = "
-            SELECT 
-                l.libro_titulo,
-                l.libro_isbn,
-                GROUP_CONCAT(a.autor_nombre SEPARATOR ', ') AS autor_nombre
-            FROM prestamoejemplar pe
-            JOIN ejemplar e ON pe.prestamoejemplar_ejemplar_id = e.ejemplar_id
-            JOIN libro l     ON e.ejemplar_libro_id = l.libro_id
-            LEFT JOIN libroautor_libroautor la ON l.libro_id = la.libroautor_libro_id
-            LEFT JOIN autor a ON la.autor_id = a.autor_id
-            WHERE pe.prestamoejemplar_prestamo_id = ?
-            GROUP BY l.libro_id, l.libro_titulo, l.libro_isbn
-        ";
+        SELECT 
+            l.libro_titulo,
+            l.libro_isbn,
+            -- forzar DISTINCT en autores
+            GROUP_CONCAT(DISTINCT a.autor_nombre SEPARATOR ', ') AS autor_nombre
+        FROM prestamoejemplar pe
+        JOIN ejemplar e ON pe.prestamoejemplar_ejemplar_id = e.ejemplar_id
+        JOIN libro l     ON e.ejemplar_libro_id = l.libro_id
+        LEFT JOIN libroautor_libroautor la 
+            ON la.libroautor_libro_id = l.libro_id
+        LEFT JOIN autor a 
+            ON a.autor_id = la.autor_id
+        WHERE pe.prestamoejemplar_prestamo_id = ?
+        GROUP BY l.libro_id, l.libro_titulo, l.libro_isbn
+    ";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param('i', $prestamoId);
         $stmt->execute();
         $datos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
-        return $datos;
+        return $datos ?: [];
     }
+
+
     public function confirmar_devolucion(int $prestamoId): bool
     {
         // 1) marco fecha real de devolución
@@ -115,24 +120,26 @@ class Prestamo
     {
         $f = "%{$filtro}%";
         $sql = "
-            SELECT 
-              e.ejemplar_id,
-              l.libro_titulo,
-              l.libro_isbn,
-              GROUP_CONCAT(a.autor_nombre SEPARATOR ', ') AS autor_nombre
-            FROM ejemplar e
-            JOIN libro l ON e.ejemplar_libro_id = l.libro_id
-            LEFT JOIN libroautor_libroautor la ON l.libro_id = la.libroautor_libro_id
-            LEFT JOIN autor a ON la.autor_id = a.autor_id
-            WHERE e.ejemplar_estado = 'disponible'
-              AND (
-                   l.libro_titulo LIKE ?
-                OR l.libro_isbn   LIKE ?
-                OR a.autor_nombre LIKE ?
-              )
-            GROUP BY e.ejemplar_id
-            ORDER BY l.libro_titulo ASC
-        ";
+        SELECT 
+          e.ejemplar_id,
+          l.libro_titulo,
+          l.libro_isbn,
+          GROUP_CONCAT(DISTINCT a.autor_nombre SEPARATOR ', ') AS autor_nombre
+        FROM ejemplar e
+        JOIN libro l ON e.ejemplar_libro_id = l.libro_id
+        LEFT JOIN libroautor_libroautor la 
+          ON la.libroautor_libro_id = l.libro_id
+        LEFT JOIN autor a 
+          ON a.autor_id = la.autor_id
+        WHERE e.ejemplar_estado = 'disponible'
+          AND (
+               l.libro_titulo LIKE ?
+            OR l.libro_isbn   LIKE ?
+            OR a.autor_nombre LIKE ?
+          )
+        GROUP BY e.ejemplar_id
+        ORDER BY l.libro_titulo ASC
+    ";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param('sss', $f, $f, $f);
         $stmt->execute();
