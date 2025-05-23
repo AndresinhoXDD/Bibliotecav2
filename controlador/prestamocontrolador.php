@@ -85,7 +85,7 @@ class prestamocontrolador
         }
         // lectura opcional del campo de búsqueda q
         $q = trim($_GET['q'] ?? '');
-        $ejemplares = $this->modelo_prestamo->buscar_ejemplares($q);
+        $libros = $this->modelo_prestamo->buscar_libros_disponibles($q);
         // calcular fechas
         $hoy = new DateTime('now');
         // fecha prevista +3 días hábiles
@@ -114,12 +114,33 @@ class prestamocontrolador
         }
         $nombre = trim($_POST['nombre'] ?? '');
         $cedula = trim($_POST['cedula'] ?? '');
-        $ejemplarIds = $_POST['ejemplar'] ?? [];  // array de IDs
+        $ejemplarIds = $_POST['libro'] ?? [];  // array de IDs
 
         // validaciones básicas
         if ($nombre === '' || $cedula === '' || count($ejemplarIds) < 1 || count($ejemplarIds) > 3) {
             $_SESSION['mensaje_error'] = 'Debe ingresar datos y seleccionar entre 1 y 3 ejemplares distintos.';
             header('Location: /bibliotecav2/index.php?accion=nuevo_prestamo');
+            exit;
+        }
+        $libroIds    = $_POST['libro'] ?? [];
+        if (count($libroIds) < 1 || count($libroIds) > 3) {
+            $_SESSION['mensaje_error'] = 'Debe seleccionar entre 1 y 3 libros distintos.';
+            header('Location: index.php?accion=nuevo_prestamo');
+            exit;
+        }
+
+        // Traducir cada libro_id a un ejemplar_id único
+        $ejemplarIds = [];
+        foreach ($libroIds as $lid) {
+            $eid = $this->modelo_prestamo->obtener_ejemplar_disponible((int)$lid);
+            if ($eid !== null) {
+                $ejemplarIds[] = $eid;
+            }
+        }
+
+        if (count($ejemplarIds) !== count($libroIds)) {
+            $_SESSION['mensaje_error'] = 'Algún libro ya no está disponible.';
+            header('Location: index.php?accion=nuevo_prestamo');
             exit;
         }
         $prestId = $this->modelo_prestamo->obtener_o_crear_prestatario($nombre, $cedula);

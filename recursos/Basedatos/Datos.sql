@@ -40,7 +40,6 @@ INSERT IGNORE INTO prestatario (prestatario_nombre, prestatario_identificacion) 
 INSERT IGNORE INTO rol (rol_nombre) VALUES
   ('Administrador'),
   ('Bibliotecario'),
-  ('Invitado'),
   ('Usuario_externo');
 
 -- Insertar registros en la tabla usuario (4 registros)
